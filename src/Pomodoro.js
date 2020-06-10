@@ -21,6 +21,13 @@ const Pomodoro = () => {
   const sessionIncrement = () => {
     if(sessionMinutes < 5) setSessionMinutes( sessionMinutes+1 );
   };
+  const reset = () => {
+    setBreakMinutes(0);
+    setBreakSeconds(0);
+    setSessionMinutes(0);
+    setSessionSeconds(0);
+    setActive("Session");
+  }
   return (
     <div id="pomodoro">
       <Session increment={sessionIncrement} decrement={sessionDecrement} seconds={sessionSeconds} minutes={sessionMinutes} />
@@ -32,7 +39,9 @@ const Pomodoro = () => {
         sessionMinutes={sessionMinutes}
         active={active}
       />
-      <div id="controls">
+      <div role="region" aria-label="controls" id="controls">
+        <div id="button-container"><button id="start_stop"></button></div>
+        <div id="button-container"><button onClick={reset} id="reset"></button></div>
       </div>
     </div>
   );
