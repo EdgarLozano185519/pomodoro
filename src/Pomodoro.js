@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import Session from './components/Session';
 import Break from './components/Break';
+import ActiveTimer from './components/ActiveTimer';
 
 const Pomodoro = () => {
   const [ breakMinutes, setBreakMinutes ] = useState(5);
   const [ breakSeconds, setBreakSeconds ] = useState(0);
   const [ sessionMinutes, setSessionMinutes ] = useState(25);
   const [ sessionSeconds, setSessionSeconds ] = useState(0);
+  const [ active, setActive ] = useState("Session");
   const breakDecrement = () => {
     if(breakMinutes > 0) setBreakMinutes( breakMinutes-1 );
   };
@@ -23,6 +25,15 @@ const Pomodoro = () => {
     <div id="pomodoro">
       <Session increment={sessionIncrement} decrement={sessionDecrement} seconds={sessionSeconds} minutes={sessionMinutes} />
       <Break increment={breakIncrement} decrement={breakDecrement} seconds={breakSeconds} minutes={breakMinutes} />
+      <ActiveTimer
+        breakSeconds={breakSeconds}
+        breakMinutes={breakMinutes}
+        sessionSeconds={sessionSeconds}
+        sessionMinutes={sessionMinutes}
+        active={active}
+      />
+      <div id="controls">
+      </div>
     </div>
   );
 }
