@@ -9,6 +9,8 @@ const Pomodoro = () => {
   const [ sessionMinutes, setSessionMinutes ] = useState(25);
   const [ sessionSeconds, setSessionSeconds ] = useState(0);
   const [ active, setActive ] = useState("Session");
+  const [ paused, setPaused ] = useState(true);
+  const [ timerId, setTimerId ] = useState(null);
   const breakDecrement = () => {
     if(breakMinutes > 0) setBreakMinutes( breakMinutes-1 );
   };
@@ -28,6 +30,27 @@ const Pomodoro = () => {
     setSessionSeconds(0);
     setActive("Session");
   }
+  const timer = () => {
+    if(paused){
+      setTimerId(
+        setInterval(() => {
+          if(active==="Session" && sessionSeconds === 0 && sessionMinutes>0){
+            setSessionMinutes( sessionMinutes-1 );
+            setSessionSeconds(59);
+          }
+          else if(active==="Session" && sessionSeconds>0) setSessionSeconds( sessionSeconds-1 );
+        },1000);
+      );
+      setPaused( false );
+    }
+  else {
+    if(timerId!==null){
+      clearInterval(timerId);
+      setTimerId(null);
+    }
+    setPaused(true);
+  }
+  }
   return (
     <div id="pomodoro">
       <Session increment={sessionIncrement} decrement={sessionDecrement} seconds={sessionSeconds} minutes={sessionMinutes} />
@@ -40,7 +63,7 @@ const Pomodoro = () => {
         active={active}
       />
       <div role="region" aria-label="controls" id="controls">
-        <div id="button-container"><button id="start_stop">Start/Stop</button></div>
+        <div id="button-container"><button onClick={timer} id="start_stop">Start/Stop</button></div>
         <div id="button-container"><button onClick={reset} id="reset">Reset</button></div>
       </div>
     </div>
