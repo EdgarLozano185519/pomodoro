@@ -19,7 +19,7 @@ const ActiveTimer = (props) => {
       <h2>Active Timer</h2>
       <div id="timer-label">{props.active}</div>
       <h2>Time Left</h2>
-      <div id="time-left">{timerString}</div>
+      <div aria-live="assertive" id="time-left">{timerString}</div>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Session from './components/Session';
 import Break from './components/Break';
 import ActiveTimer from './components/ActiveTimer';
@@ -10,7 +10,17 @@ const Pomodoro = () => {
   const [ sessionSeconds, setSessionSeconds ] = useState(0);
   const [ active, setActive ] = useState("Session");
   const [ paused, setPaused ] = useState(true);
-  const [ timerId, setTimerId ] = useState(null);
+  useEffect(() => {
+    let interval = null;
+    if(!paused) interval = setInterval(()=>{
+      if(active==="Session" && sessionSeconds>0) setSessionSeconds(sessionSeconds => sessionSeconds-1);
+      else if(active==="Session" && sessionSeconds===0 && sessionMinutes>0) {
+        setSessionSeconds(59);
+        setSessionMinutes(sessionMinutes => sessionMinutes-1);
+      }
+    },1000);
+    return () => interval !== null ? clearInterval(interval) : 0;
+  }, [paused, sessionMinutes, sessionSeconds, active]);
   const breakDecrement = () => {
     if(breakMinutes > 0) setBreakMinutes( breakMinutes-1 );
   };
@@ -31,25 +41,8 @@ const Pomodoro = () => {
     setActive("Session");
   }
   const timer = () => {
-    if(paused){
-      setTimerId(
-        setInterval(() => {
-          if(active==="Session" && sessionSeconds === 0 && sessionMinutes>0){
-            setSessionMinutes( sessionMinutes-1 );
-            setSessionSeconds(59);
-          }
-          else if(active==="Session" && sessionSeconds>0) setSessionSeconds( sessionSeconds-1 );
-        },1000);
-      );
-      setPaused( false );
-    }
-  else {
-    if(timerId!==null){
-      clearInterval(timerId);
-      setTimerId(null);
-    }
-    setPaused(true);
-  }
+    if(paused) setPaused(false);
+    else setPaused(true);
   }
   return (
     <div id="pomodoro">
