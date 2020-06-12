@@ -20,7 +20,7 @@ const Pomodoro = () => {
       }
     },1000);
     return () => interval !== null ? clearInterval(interval) : 0;
-  }, [paused, sessionMinutes, sessionSeconds, active]);
+  }, [ paused, sessionMinutes, sessionSeconds, active, breakSeconds, breakMinutes ]);
   const breakDecrement = () => {
     if(breakMinutes > 0) setBreakMinutes( breakMinutes-1 );
   };
@@ -44,10 +44,30 @@ const Pomodoro = () => {
     if(paused) setPaused(false);
     else setPaused(true);
   }
+  if(active==="Session" && sessionMinutes===0 && sessionSeconds===0) {
+    setActive("Break");
+    setSessionMinutes(25);
+    setSessionSeconds(0);
+  }
+  else if(active==="Break" && breakSeconds===0 && breakSeconds===0) {
+    setActive("Session");
+    setBreakSeconds(0);
+    setBreakMinutes(5);
+  }
   return (
     <div id="pomodoro">
-      <Session increment={sessionIncrement} decrement={sessionDecrement} seconds={sessionSeconds} minutes={sessionMinutes} />
-      <Break increment={breakIncrement} decrement={breakDecrement} seconds={breakSeconds} minutes={breakMinutes} />
+      <Session
+        increment={sessionIncrement}
+        decrement={sessionDecrement}
+        seconds={sessionSeconds}
+        minutes={sessionMinutes}
+      />
+      <Break
+        increment={breakIncrement}
+        decrement={breakDecrement}
+        seconds={breakSeconds}
+        minutes={breakMinutes}
+      />
       <ActiveTimer
         breakSeconds={breakSeconds}
         breakMinutes={breakMinutes}
@@ -56,6 +76,7 @@ const Pomodoro = () => {
         active={active}
       />
       <div role="region" aria-label="controls" id="controls">
+        <h2>Controls</h2>
         <div id="button-container"><button onClick={timer} id="start_stop">Start/Stop</button></div>
         <div id="button-container"><button onClick={reset} id="reset">Reset</button></div>
       </div>
