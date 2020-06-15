@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Session from './components/Session';
 import Break from './components/Break';
 import ActiveTimer from './components/ActiveTimer';
@@ -44,6 +44,9 @@ const Pomodoro = () => {
     setSessionMinutes(25);
     setSessionSeconds(0);
     setActive("Session");
+    let audioElement = document.getElementById("beep");
+    audioElement.pause();
+    if(audioElement.currentTime>0) audioElement.currentTime=0;
   }
   const timer = () => {
     if(paused) setPaused(false);
@@ -51,14 +54,18 @@ const Pomodoro = () => {
   }
   if(active==="Session" && sessionMinutes===0 && sessionSeconds===0) {
     setActive("Break");
-    setSessionMinutes(5);
-    setSessionSeconds(0);
+    setBreakMinutes(5);
+    setSessionMinutes(25);
+    setBreakSeconds(0);
   }
   else if(active==="Break" && breakMinutes===0 && breakSeconds===0) {
     setActive("Session");
-    setBreakSeconds(0);
-    setBreakMinutes(25);
+    setSessionSeconds(0);
+    setSessionMinutes(25);
+    setBreakMinutes(5);
   }
+  let audioRef = useRef(null);
+  if(audioRef.current && ((sessionMinutes===0&&sessionSeconds===0) || (breakSeconds===0&&breakMinutes===0))) audioRef.current.play();
   return (
     <div id="pomodoro">
       <Session
@@ -82,6 +89,9 @@ const Pomodoro = () => {
       />
       <div role="region" aria-label="controls" id="controls">
         <h2>Controls</h2>
+        <audio id="beep" ref={audioRef}>
+          <source src="https://www.dropbox.com/s/6gz7v9e4u51ubin/beep.mp3?raw=1"></source>
+        </audio>
         <div id="button-container"><button onClick={timer} id="start_stop">Start/Stop</button></div>
         <div id="button-container"><button onClick={reset} id="reset">Reset</button></div>
       </div>
