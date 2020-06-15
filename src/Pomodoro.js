@@ -18,6 +18,11 @@ const Pomodoro = () => {
         setSessionSeconds(59);
         setSessionMinutes(sessionMinutes => sessionMinutes-1);
       }
+      else if(active==="Break" && breakSeconds>0) setBreakSeconds(breakSeconds => breakSeconds-1);
+      else if(active==="Break" && breakSeconds===0 && breakMinutes>0) {
+        setBreakSeconds(59);
+        setBreakMinutes(sessionMinutes => sessionMinutes-1);
+      }
     },1000);
     return () => interval !== null ? clearInterval(interval) : 0;
   }, [ paused, sessionMinutes, sessionSeconds, active, breakSeconds, breakMinutes ]);
@@ -46,13 +51,13 @@ const Pomodoro = () => {
   }
   if(active==="Session" && sessionMinutes===0 && sessionSeconds===0) {
     setActive("Break");
-    setSessionMinutes(25);
+    setSessionMinutes(5);
     setSessionSeconds(0);
   }
-  else if(active==="Break" && breakSeconds===0 && breakSeconds===0) {
+  else if(active==="Break" && breakMinutes===0 && breakSeconds===0) {
     setActive("Session");
     setBreakSeconds(0);
-    setBreakMinutes(5);
+    setBreakMinutes(25);
   }
   return (
     <div id="pomodoro">
